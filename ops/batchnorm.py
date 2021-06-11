@@ -4,7 +4,7 @@ import tensorflow.compat.v1 as tf
 # tf.compat.v1.disable_v2_behavior()
 tf.disable_v2_behavior()
 
-def Batchnorm_contrib(opts, input, scope=None, is_training=False, reuse=None, scale=True, center=True, fused=False):
+def Batchnorm_contrib(opts: dict, input: tf.Tensor, scope=None, is_training=False, reuse=None, scale=True, center=True, fused=False) -> tf.Tensor:
     """Batch normalization based on tf.contrib.layers.
 
     """
@@ -14,7 +14,7 @@ def Batchnorm_contrib(opts, input, scope=None, is_training=False, reuse=None, sc
         is_training=is_training, reuse=reuse, updates_collections=None,
         scope=scope, fused=fused)
 
-def Batchnorm_layers(opts, input, scope=None, is_training=False, reuse=None, scale=True, center=True, fused=False):
+def Batchnorm_layers(opts: dict, input: tf.Tensor, scope=None, is_training=False, reuse=None, scale=True, center=True, fused=False) -> tf.Tensor:
     """Batch normalization based on tf.layers.batch_normalization.
 
     """

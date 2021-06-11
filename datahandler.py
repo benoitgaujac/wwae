@@ -29,6 +29,7 @@ from math import ceil
 import utils
 
 import pdb
+import typing
 
 # Path to data
 # data_dir = '../data'
@@ -44,7 +45,7 @@ datashapes['cifar10'] = [32, 32, 3]
 datashapes['celebA'] = [64, 64, 3]
 
 
-def _data_dir(opts):
+def _data_dir(opts: dict) -> str:
     _data_dir = os.path.join(opts['data_dir'], opts['dataset'])
     if opts['dataset']=='mnist':
         data_path = _data_dir
@@ -65,7 +66,7 @@ def _data_dir(opts):
     assert os.path.isdir(data_path), '{} dir. doesnt exist'. format(opts['dataset'])
     return data_path
 
-def _load_cifar_batch(fpath):
+def _load_cifar_batch(fpath: str) -> tf.Tensor:
     """Internal utility for parsing CIFAR data.
 
     # Arguments
@@ -90,7 +91,7 @@ def _load_cifar_batch(fpath):
     data = data.reshape(data.shape[0], 3, 32, 32).astype(dtype=np.float32)
     return data
 
-def _shift_mnist_tf(x):
+def _shift_mnist_tf(x: tf.Tensor) -> tf.Tensor:
     # padding mnist img
     # paddings = [[2,2], [2,2], [0,0]]
     # x_pad = tf.pad(x, paddings, mode='CONSTANT', constant_values=0.)
@@ -122,7 +123,7 @@ def _shift_mnist_tf(x):
 
     return tf.reshape(img, datashapes['shifted_mnist'])
 
-def _shift_mnist_3pos_tf(x):
+def _shift_mnist_3pos_tf(x: tf.Tensor) -> tf.Tensor:
     # padding mnist img
 #    paddings = [[2,2], [2,2], [0,0]]
 #    x_pad = tf.pad(x, paddings, mode='CONSTANT', constant_values=0.)
@@ -144,7 +145,7 @@ def _shift_mnist_3pos_tf(x):
 
     return tf.reshape(img, datashapes['shifted_mnist'])
 
-def _shift_mnist_np(x):
+def _shift_mnist_np(x: np.ndarray) -> np.ndarray:
     # padding mnist img
     # paddings = [[2,2], [2,2], [0,0]]
     # x_pad = np.pad(x, paddings, mode='constant', constant_values=0.)
@@ -170,7 +171,7 @@ def _shift_mnist_np(x):
 
     return img
 
-def _shift_mnist_3pos_np(x):
+def _shift_mnist_3pos_np(x: np.ndarray) -> np.ndarray:
     # padding mnist img
     # paddings = [[2,2], [2,2], [0,0]]
     # x_pad = np.pad(x, paddings, mode='constant', constant_values=0.)
@@ -195,7 +196,7 @@ def _shift_mnist_3pos_np(x):
 
     return img
 
-def _rotate_mnist_tf(x):
+def _rotate_mnist_tf(x: tf.Tensor) -> tf.Tensor:
     #padding mnist img
     paddings = [[2,2], [2,2], [0,0]]
     x_pad = tf.pad(x, paddings, mode='CONSTANT', constant_values=0.)
@@ -205,7 +206,7 @@ def _rotate_mnist_tf(x):
 
     return img
 
-def _rotate_mnist_np(x):
+def _rotate_mnist_np(x: np.ndarray) -> np.ndarray:
     # padding mnist img
     paddings = [[2,2], [2,2], [0,0]]
     x_pad = np.pad(x, paddings, mode='constant', constant_values=0.)
@@ -215,7 +216,7 @@ def _rotate_mnist_np(x):
 
     return img
 
-def _gmm_generator(dataset_size):
+def _gmm_generator(dataset_size: int) -> typing.Generator[np.ndarray, None, None]:
 
     logits_shape = [int(datashapes['gmm'][0]/2),int(datashapes['gmm'][1]/2),datashapes['gmm'][2]]
     zeros = np.zeros(logits_shape)
@@ -241,7 +242,7 @@ def _gmm_generator(dataset_size):
         yield x
         n+=1
 
-def _sample_gmm(batch_size):
+def _sample_gmm(batch_size: int) -> np.ndarray:
 
     obs = np.zeros([batch_size,]+datashapes['gmm'])
     logits_shape = [int(datashapes['gmm'][0]/2),int(datashapes['gmm'][1]/2),datashapes['gmm'][2]]
@@ -277,15 +278,15 @@ class DataHandler(object):
     """
 
 
-    def __init__(self, opts):
-        self.dataset = opts['dataset']
-        self.crop_style = opts['celebA_crop']
+    def __init__(self, opts: dict) -> None:
+        self.dataset: str = opts['dataset']
+        self.crop_style: str = opts['celebA_crop']
         # load data
         logging.error('\n Loading {}.'.format(self.dataset))
         self._init_dataset(opts)
         logging.error('Loading Done.')
 
-    def _init_dataset(self, opts):
+    def _init_dataset(self, opts: dict) -> None:
         """Load a dataset and fill all the necessary variables.
 
         """
@@ -306,9 +307,9 @@ class DataHandler(object):
         elif self.dataset == 'celebA':
             self._load_celebA(opts)
         else:
-            raise ValueError('Unknown {} dataset' % self.dataset)
+            raise ValueError('Unknown %s dataset' % self.dataset)
 
-    def _load_gmm(self, opts):
+    def _load_gmm(self, opts: dict) -> None:
         """Create GMM dataset.
 
         """
@@ -363,7 +364,7 @@ class DataHandler(object):
                                 tf.data.get_output_types(dataset_train),
                                 tf.data.get_output_shapes(dataset_train)).get_next()
 
-    def _load_mnist(self, opts):
+    def _load_mnist(self, opts: dict) -> None:
         """Load data from MNIST or ZALANDO files.
 
         """
@@ -444,7 +445,7 @@ class DataHandler(object):
                                 tf.data.get_output_types(dataset_train),
                                 tf.data.get_output_shapes(dataset_train)).get_next()
 
-    def _load_shift_mnist(self, opts):
+    def _load_shift_mnist(self, opts: dict) -> None:
         """Load 0s and 1s digits from MNIST and
         shift randomly digit in top-left or bottom-right corner
 
@@ -533,7 +534,7 @@ class DataHandler(object):
                                 tf.data.get_output_types(dataset_train),
                                 tf.data.get_output_shapes(dataset_train)).get_next()
 
-    def _load_shift_3pos_mnist(self, opts):
+    def _load_shift_3pos_mnist(self, opts: dict) -> None:
         """Load 1s digits from MNIST and
         shift randomly digit in top-left, middle, or bottom-right corner
         """
@@ -621,7 +622,7 @@ class DataHandler(object):
 
 
 
-    def _load_rot_mnist(self, opts):
+    def _load_rot_mnist(self, opts: dict) -> None:
         """Load 1s and 5s digits from MNIST and
         shift randomly digit in top-left or bottom-right corner
 
@@ -712,7 +713,7 @@ class DataHandler(object):
                                 tf.data.get_output_types(dataset_train),
                                 tf.data.get_output_shapes(dataset_train)).get_next()
 
-    def _load_svhn(self, opts):
+    def _load_svhn(self, opts: dict) -> None:
         """Load data from SVHN files.
 
         """
@@ -811,11 +812,11 @@ class DataHandler(object):
         self.iterator_test = dataset_test.make_initializable_iterator()
 
         # Global iterator
-        self.handle = tfv1.placeholder(tf.string, shape=[])
+        self.handle = tf.placeholder(tf.string, shape=[])
         self.next_element = tf.data.Iterator.from_string_handle(
             self.handle, dataset_train.output_types, dataset_train.output_shapes).get_next()
 
-    def _load_cifar10(self, opts, ):
+    def _load_cifar10(self, opts: dict) -> None:
         """Load data from MNIST or ZALANDO files.
 
         """
@@ -890,7 +891,7 @@ class DataHandler(object):
         self.next_element = tf.data.Iterator.from_string_handle(
             self.handle, dataset_train.output_types, dataset_train.output_shapes).get_next()
 
-    def _load_celebA(self, opts):
+    def _load_celebA(self, opts: dict) -> None:
         """Load CelebA
         """
         num_data = 202599
@@ -982,14 +983,14 @@ class DataHandler(object):
         self.next_element = tf.data.Iterator.from_string_handle(
             self.handle, dataset_train.output_types, dataset_train.output_shapes).get_next()
 
-    def init_iterator(self, sess):
+    def init_iterator(self, sess: tf.Session) -> typing.Tuple[typing.Any, typing.Any]:
         sess.run([self.iterator_train.initializer,self.iterator_test.initializer])
         # handle = sess.run(iterator.string_handle())
         train_handle, test_handle = sess.run([self.iterator_train.string_handle(),self.iterator_test.string_handle()])
 
         return train_handle, test_handle
 
-    def _sample_observations(self, keys):
+    def _sample_observations(self, keys: typing.Iterable[int]) -> np.ndarray:
         if len(self.all_data.shape)>1:
             # all_data is an np.ndarray already loaded into the memory
             if self.dataset=='mnist':
@@ -1026,7 +1027,7 @@ class DataHandler(object):
                 obs.append(img)
             return np.stack(obs)
 
-    def _read_image(self, key):
+    def _read_image(self, key: int) -> np.ndarray:
         seed = 123
         assert key==int(os.path.split(self.all_data[key])[1][:-4])-1, 'Mismatch between key and img_file_name'
         if self.dataset == 'celebA':
@@ -1036,7 +1037,7 @@ class DataHandler(object):
 
         return point
 
-    def _read_celeba_image(self, file_path):
+    def _read_celeba_image(self, file_path: str) -> np.ndarray:
         width = 178
         height = 218
         new_width = 140

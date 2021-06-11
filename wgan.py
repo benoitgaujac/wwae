@@ -3,8 +3,9 @@ import tensorflow as tf
 from networks import critic
 
 import pdb
+import typing
 
-def wgan(opts, x, y, is_training=False, reuse=False):
+def wgan(opts: dict, x: tf.Tensor, y: tf.Tensor, is_training=False, reuse=False) -> tf.Tensor:
     """
     Compute the W1 between images intensities.
     x[b,h,w,c]: true observation
@@ -29,7 +30,7 @@ def wgan(opts, x, y, is_training=False, reuse=False):
 
     return tf.reduce_mean(cost, axis=-1), tf.reduce_mean(intensities_reg, axis=-1), tf.reduce_mean(reg, axis=-1)
 
-def wgan_v2(opts, x, y, is_training=False, reuse=False):
+def wgan_v2(opts: dict, x: tf.Tensor, y: tf.Tensor, is_training=False, reuse=False) -> tf.Tensor:
     """
     Compute the W1 between images intensities.
     x[b,h,w,c]: true observation
@@ -59,12 +60,12 @@ def wgan_v2(opts, x, y, is_training=False, reuse=False):
 
     return tf.reduce_mean(cost, axis=-1), tf.reduce_mean(intensities_reg, axis=-1), tf.reduce_mean(reg, axis=-1)
 
-def critic_reg(critic_ouput):
+def critic_reg(critic_ouput: tf.Tensor) -> tf.Tensor:
     """
     Compute lipschitz reg for the critic: (|f_ij - f_kl|-|ij-kl|_l2)^2
     critic_ouput[b,h,w,c]: output of the critic.
     """
-    losses = []
+    losses: list = []
     glob_max_grad = 0.
     for i in range(3):
         for j in range(3):
@@ -81,7 +82,7 @@ def critic_reg(critic_ouput):
 
     return tf.square(glob_max_grad-1)
 
-def critic_max_grad(critic_ouput):
+def critic_max_grad(critic_ouput: tf.Tensor) -> tf.Tensor:
     """
     Compute max gradient critic: (|f_ij - f_kl|-|ij-kl|_l2)^2
     critic_ouput[b,h,w,c]: output of the critic.

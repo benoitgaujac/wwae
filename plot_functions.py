@@ -14,16 +14,18 @@ from sklearn.manifold import TSNE
 
 import utils
 
+import typing
 
-def save_train(opts, data_train, data_test,
+
+def save_train(opts: dict, data_train: np.ndarray, data_test: np.ndarray,
                      rec_train, rec_test,
                      samples,
-                     loss, loss_test,
-                     losses, losses_test,
-                     mse, mse_test,
-                     fid_rec, fid_gen,
-                     exp_dir,
-                     filename):
+                     loss: list, loss_test: list,
+                     losses: list, losses_test: list,
+                     mse: list, mse_test: list,
+                     fid_rec: list, fid_gen: list,
+                     exp_dir: str,
+                     filename: str) -> None:
 
     """ Generates and saves the plot of the following layout:
         img1 | img2 | img3
@@ -288,7 +290,7 @@ def plot_critic_pretrain_loss(opts, loss, exp_dir,filename):
     plt.close()
 
 
-def plot_embedded_shift(opts, encoded, exp_dir):
+def plot_embedded_shift(opts: dict, encoded: np.ndarray, exp_dir: str) -> None:
     nobs, nshift = np.shape(encoded)[:2]
     codes = encoded.reshape([nobs*nshift,-1])
     labels = np.repeat(np.arange(nobs),nshift)
@@ -343,7 +345,7 @@ def plot_embedded_shift(opts, encoded, exp_dir):
     plt.close()
 
 
-def plot_interpolation(opts, interpolations, exp_dir, filename, train=True):
+def plot_interpolation(opts: dict, interpolations: np.ndarray, exp_dir: str, filename: str, train=True) -> None:
     ### Reshaping images
     greyscale = interpolations.shape[-1] == 1
     if opts['input_normalize_sym']:
@@ -396,7 +398,7 @@ def plot_interpolation(opts, interpolations, exp_dir, filename, train=True):
     plt.close()
 
 
-def save_test(opts, data, reconstructions, samples, encoded, labels=None, exp_dir=None):
+def save_test(opts: dict, data: np.ndarray, reconstructions, samples, encoded, labels: typing.Optional[str]=None, exp_dir: typing.Optional[str]=None) -> None:
 
     num_pics = opts['plot_num_pics']
     num_cols = opts['plot_num_cols']
@@ -413,7 +415,7 @@ def save_test(opts, data, reconstructions, samples, encoded, labels=None, exp_di
     # Arrange pics and reconstructions in a proper way
     assert len(data) == num_pics
     assert len(data) == len(reconstructions)
-    pics = []
+    pics: list = []
     merged = np.vstack([reconstructions, data])
     r_ptr = 0
     w_ptr = 0
@@ -551,7 +553,7 @@ def save_test(opts, data, reconstructions, samples, encoded, labels=None, exp_di
         plt.close()
 
 
-def plot_cost_shift(rec_sr, mse_sr, ground_os, mse_os, exp_dir):
+def plot_cost_shift(rec_sr: np.ndarray, mse_sr: np.ndarray, ground_os: np.ndarray, mse_os: np.ndarray, exp_dir: str) -> None:
         nshift = len(rec_sr)
         dpi = 100
         fig_height = 500 / float(dpi)
@@ -615,7 +617,7 @@ def plot_cost_shift(rec_sr, mse_sr, ground_os, mse_os, exp_dir):
         plt.close()
 
 
-def plot_rec_shift(opts, shifted_obs, shifted_rec, exp_dir):
+def plot_rec_shift(opts, shifted_obs: np.ndarray, shifted_rec: np.ndarray, exp_dir: str) -> None:
 
     greyscale = shifted_obs.shape[-1] == 1
 
@@ -667,7 +669,7 @@ def plot_rec_shift(opts, shifted_obs, shifted_rec, exp_dir):
     plt.close()
 
 
-def discrete_cmap(N, base_cmap=None):
+def discrete_cmap(N: int, base_cmap=None) -> typing.Any:
     """Create an N-bin discrete colormap from the specified input map"""
     # Note that if base_cmap is a string or None, you can simply do
     #    return plt.cm.get_cmap(base_cmap, N)

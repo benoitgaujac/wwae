@@ -5,8 +5,10 @@ import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 
 import pdb
+import typing
 
-def custom_uniform(stdev, size):
+
+def custom_uniform(stdev: float, size: typing.Iterable[int]) -> np.ndarray:
     return np.random.uniform(
         low=-stdev * np.sqrt(3),
         high=stdev * np.sqrt(3),
@@ -14,7 +16,8 @@ def custom_uniform(stdev, size):
     ).astype('float32')
 
 
-def Conv2d(opts, input, input_dim, output_dim, filter_size, stride=1, padding='SAME', scope=None, init='he', biases=True):
+def Conv2d(opts: dict, input: tf.Tensor, input_dim: int, output_dim: int, filter_size: int,
+        stride=1, padding='SAME', scope=None, init='he', biases=True) -> tf.Tensor:
     """Convolutional layer.
 
     Args:

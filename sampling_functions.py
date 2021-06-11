@@ -7,8 +7,9 @@ import tensorflow.compat.v1 as tf
 from scipy import ndimage
 
 import pdb
+import typing
 
-def sample_pz(opts, means, Sigma, batch_size=100):
+def sample_pz(opts: dict, means: tf.Tensor, Sigma: tf.Tensor, batch_size=100) -> tf.Tensor:
     if opts['prior']=='gaussian' or opts['prior']=='implicit':
         noise = sample_gaussian(means, Sigma, batch_size, 'numpy')
     elif opts['prior']=='gmm':
@@ -19,7 +20,7 @@ def sample_pz(opts, means, Sigma, batch_size=100):
         assert False, 'Unknown prior %s' % opts['prior']
     return noise
 
-def sample_gaussian(means, Sigma, batch_size=100, type='numpy'):
+def sample_gaussian(means: tf.Tensor, Sigma: tf.Tensor, batch_size=100, type='numpy') -> tf.Tensor:
     """
     Sample noise from gaussian distribution with parameters
     means and covs
@@ -37,7 +38,7 @@ def sample_gaussian(means, Sigma, batch_size=100, type='numpy'):
         noise = means + np.multiply(eps, np.sqrt(1e-10+Sigma))
     return noise
 
-def sample_gmm(nmix, means, Sigma, batch_size=100):
+def sample_gmm(nmix: int, means: tf.Tensor, Sigma: tf.Tensor, batch_size=100) -> tf.Tensor:
     """
     Sample prior noise according to sampling_mode
     """
@@ -48,7 +49,7 @@ def sample_gmm(nmix, means, Sigma, batch_size=100):
 
     return samples
 
-def sample_all_gmm(means, Sigma, batch_size=100):
+def sample_all_gmm(means: tf.Tensor, Sigma: tf.Tensor, batch_size=100) -> tf.Tensor:
     """
     Sample for each component of the gmm
 
@@ -62,20 +63,20 @@ def sample_all_gmm(means, Sigma, batch_size=100):
 
     return noise
 
-def sample_dirichlet(alpha, batch_size=100):
+def sample_dirichlet(alpha: tf.Tensor, batch_size=100) -> tf.Tensor:
     """
     Sample noise from dirichlet distribution with parameters
     alpha
     """
     return np.random.dirichlet(alpha, batch_size)
 
-def sample_unif(shape, minval=0, maxval=None, dtype=tf.float32):
+def sample_unif(shape: typing.Iterable[int], minval=0, maxval=None, dtype=tf.float32) -> tf.Tensor:
     """
     Sample noise from Unif[minval,maxval]
     """
     return tf.random.uniform(shape, minval, maxval, dtype)
 
-def sample_bernoulli(params):
+def sample_bernoulli(params: object) -> tf.Tensor:
     """
     Sample noise from Bernoulli distribution with mean parameters
     params
@@ -87,7 +88,7 @@ def sample_bernoulli(params):
     return bernoulli_dist.sample()
     """
 
-def traversals(anchors, nsteps, std=1.0):
+def traversals(anchors: np.ndarray, nsteps: int, std=1.0) -> np.ndarray:
     """
     Genereate linear grid space
         - anchors[nanchors,zdim]: encoding
@@ -111,7 +112,7 @@ def traversals(anchors, nsteps, std=1.0):
 
     return linespce
 
-def interpolations(anchors, nsteps, std=1.0):
+def interpolations(anchors: np.ndarray, nsteps: int, std=1.0) -> np.ndarray:
     """
     Genereate linear grid space
         - anchors[nanchors,2,zdim]: encoding
@@ -130,7 +131,7 @@ def interpolations(anchors, nsteps, std=1.0):
 
     return linespce
 
-def grid(nsteps, zdim):
+def grid(nsteps: int, zdim: int) -> np.ndarray:
     """
     Generate a 2D grid of nsteps x nsteps in [-2,2]**2
     return grid: [nsteps,nsteps,zdim]
@@ -142,7 +143,7 @@ def grid(nsteps, zdim):
 
     return grid
 
-def shift(opts, inputs, shift_dir, shift):
+def shift(opts, inputs: np.ndarray, shift_dir: np.ndarray, shift: float) -> np.ndarray:
     ninputs = inputs.shape[0]
     in_shape = np.array(inputs.shape[1:-1])
     # padded = np.pad(inputs, ((0,0),(shift,shift),(shift,shift),(0,0)), mode='edge')
@@ -158,7 +159,7 @@ def shift(opts, inputs, shift_dir, shift):
         print(shifted[-1].shape)
     return np.stack(shifted,axis=0)
 
-def rotate(opts, batch, rot_dir, nangle, base_angle):
+def rotate(opts, batch: np.ndarray, rot_dir: np.ndarray, nangle: int, base_angle: float) -> np.ndarray:
     angle = rot_dir * base_angle * nangle
     batch_size = batch.shape[0]
     rotated = []

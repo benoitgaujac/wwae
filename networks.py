@@ -9,10 +9,10 @@ from net_archi import net_archi , critic_archi
 
 import logging
 import pdb
+import typing
 
-def encoder(opts, input, output_dim, scope=None,
-                                    reuse=False,
-                                    is_training=False):
+def encoder(opts: typing.Dict[str, typing.Any], input: tf.Tensor, output_dim: int, scope=None,
+            reuse=False, is_training=False) -> typing.Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
     with tf.variable_scope(scope, reuse=reuse):
         if opts['net_archi'] == 'mlp':
             encoder = net_archi['mlp']['encoder']
@@ -42,9 +42,8 @@ def encoder(opts, input, output_dim, scope=None,
     return z, mean, Sigma
 
 
-def decoder(opts, input, output_dim, scope=None,
-                                    reuse=False,
-                                    is_training=False):
+def decoder(opts: typing.Dict[str, typing.Any], input: tf.Tensor, output_dim: tf.Tensor, scope=None,
+            reuse=False, is_training=False) -> typing.Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
     with tf.variable_scope(scope, reuse=reuse):
         if opts['net_archi'] == 'mlp':
             decoder = net_archi['mlp']['decoder']
@@ -65,7 +64,7 @@ def decoder(opts, input, output_dim, scope=None,
     Sigma = tf.reshape(Sigma, [-1,np.prod(Sigma_shape)])
 
     # sampling from gaussian if needed
-    if opts['decoder']=='gaussian':
+    if opts['decoder'] == 'gaussian':
         x = sample_gaussian(mean, Sigma, type='tensorflow')
     else:
         x = mean
@@ -80,7 +79,7 @@ def decoder(opts, input, output_dim, scope=None,
     return x, mean, Sigma
 
 
-def critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def critic(opts: typing.Dict[str, typing.Any], inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     """
     Critic network of the w1
     inputs: [batch,w,h,c]

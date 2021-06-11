@@ -24,9 +24,13 @@ from datahandler import datashapes
 from fid.fid import calculate_frechet_distance
 
 import pdb
+import typing
+from datahandler import DataHandler
+
+
 class Run(object):
 
-    def __init__(self, opts, data):
+    def __init__(self, opts: dict, data: DataHandler) -> None:
 
         logging.error('Building the Tensorflow Graph')
         self.opts = opts
@@ -42,6 +46,7 @@ class Run(object):
         self.add_ph()
 
         # --- Instantiate Model
+        self.model: typing.Optional[models.Model] = None
         if opts['model'] == 'BetaVAE':
             self.model = models.BetaVAE(opts, self.pz_mean, self.pz_Sigma)
         elif opts['model'] == 'WAE':
@@ -139,7 +144,7 @@ class Run(object):
         self.sess.graph.finalize()
 
 
-    def add_ph(self):
+    def add_ph(self) -> None:
         self.lr_decay = tf.placeholder(tf.float32, name='rate_decay_ph')
         self.is_training = tf.placeholder(tf.bool, name='is_training_ph')
         self.pz_samples = tf.placeholder(tf.float32,
@@ -153,7 +158,7 @@ class Run(object):
                                          name='point2_ph')
         self.beta = tf.placeholder(tf.float32, name='beta_ph')
 
-    def compute_blurriness(self):
+    def compute_blurriness(self) -> tf.Tensor:
         images = self.inputs_img
         # First convert to greyscale
         if self.data.data_shape[-1] > 1:
@@ -167,7 +172,7 @@ class Run(object):
         _, lapvar = tf.nn.moments(conv, axes=[1, 2, 3])
         return lapvar
 
-    def create_inception_graph(self):
+    def create_inception_graph(self) -> None:
         inception_model = 'classify_image_graph_def.pb'
         inception_path = os.path.join('fid', inception_model)
         # Create inception graph
@@ -176,7 +181,7 @@ class Run(object):
             graph_def.ParseFromString( f.read())
             _ = tf.import_graph_def( graph_def, name='FID_Inception_Net')
 
-    def _get_inception_layer(self):
+    def _get_inception_layer(self) -> typing.Any:
         # Get inception activation layer (and reshape for batching)
         layername = 'FID_Inception_Net/pool_3:0'
         pool3 = self.inception_sess.graph.get_tensor_by_name(layername)
@@ -186,7 +191,7 @@ class Run(object):
                 shape = o.get_shape()
                 if shape._dims != []:
                   shape = [s.value for s in shape]
-                  new_shape = []
+                  new_shape: typing.List[int] = []
                   for j, s in enumerate(shape):
                     if s == 1 and j == 0:
                       new_shape.append(None)
@@ -195,7 +200,7 @@ class Run(object):
                   o.__dict__['_shape_val'] = tf.TensorShape(new_shape)
         return pool3
 
-    def optimizer(self, lr, decay=1.):
+    def optimizer(self, lr: float, decay=1.) -> tf.train.Optimizer:
         opts = self.opts
         lr *= decay
         if opts['optimizer'] == 'sgd':
@@ -205,13 +210,13 @@ class Run(object):
         else:
             assert False, 'Unknown optimizer.'
 
-    def adam_discr_optimizer(self, lr=1e-4, beta1=0.9, beta2=0.999):
+    def adam_discr_optimizer(self, lr=1e-4, beta1=0.9, beta2=0.999) -> tf.train.AdamOptimizer:
         return tf.train.AdamOptimizer(learning_rate=lr, beta1=beta1, beta2=beta2)
 
-    def RMSProp_discr_optimizer(self, lr=5e-5):
+    def RMSProp_discr_optimizer(self, lr=5e-5) -> tf.train.RMSPropOptimizer:
         return tf.train.RMSPropOptimizer(lr)
 
-    def add_optimizers(self):
+    def add_optimizers(self) -> None:
         opts = self.opts
         # Encoder/decoder optimizer
         lr = opts['lr']
@@ -245,7 +250,7 @@ class Run(object):
                     self.critic_pretrain_opt = critic_opt.minimize(loss=-self.critic_pretrain_loss, var_list=critic_vars)
 
 
-    def train(self, WEIGHTS_FILE=None):
+    def train(self, WEIGHTS_FILE: typing.Optional[str]=None) -> None:
         """
         Train top-down model with chosen method
         """
@@ -606,7 +611,7 @@ class Run(object):
             np.savez(os.path.join(save_path, name),
                     fid_rec=np.array(FID_rec), fid_gen=np.array(FID_gen))
 
-    def plot(self, WEIGHTS_FILE=None):
+    def plot(self, WEIGHTS_FILE: typing.Optional[str]=None) -> None:
         """
         Plots reconstructions, latent transversals and model samples
         """
@@ -791,7 +796,7 @@ class Run(object):
                                     'interpolations.png',
                                     train=False)
 
-    def perturbation_test(self, WEIGHTS_FILE=None):
+    def perturbation_test(self, WEIGHTS_FILE: typing.Optional[str]=None) -> None:
 
         opts = self.opts
 
@@ -1046,7 +1051,7 @@ class Run(object):
                                         WEIGHTS_FILE=None,
                                         compute_dataset_statistics=False,
                                         fid_inputs='samples',
-                                        save_score=False):
+                                        save_score=False) -> np.ndarray:
         """
         Compute FID score
         """

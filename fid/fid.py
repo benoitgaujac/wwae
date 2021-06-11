@@ -15,15 +15,16 @@ See --help to see further details.
 from __future__ import absolute_import, division, print_function
 import numpy as np
 import os
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 # from scipy.misc import imread
 from scipy import linalg
+import typing
 
 class InvalidFIDException(Exception):
     pass
 
 
-def create_inception_graph(pth):
+def create_inception_graph(pth: str) -> None:
     """Creates a graph from saved GraphDef file."""
     # Creates graph from saved graph_def.pb.
     with tf.gfile.FastGFile(pth, 'rb') as f:
@@ -37,7 +38,7 @@ def create_inception_graph(pth):
 
 # code for handling inception net derived from
 #   https://github.com/openai/improved-gan/blob/master/inception_score/model.py
-def _get_inception_layer(sess):
+def _get_inception_layer(sess: tf.Session) -> tf.Tensor:
     """Prepares inception net for batched usage and returns pool_3 layer. """
     layername = 'FID_Inception_Net/pool_3:0'
     pool3 = sess.graph.get_tensor_by_name(layername)
@@ -50,7 +51,7 @@ def _get_inception_layer(sess):
             shape = o.get_shape()
             if shape._dims != []:
                 shape = [s.value for s in shape]
-                new_shape = []
+                new_shape: list = []
                 for j, s in enumerate(shape):
                     if s == 1 and j == 0:
                         new_shape.append(None)
@@ -63,7 +64,7 @@ def _get_inception_layer(sess):
 # -------------------------------------------------------------------------------
 
 
-def get_activations(images, sess, batch_size=50, verbose=False):
+def get_activations(images: np.ndarray, sess: tf.Session, batch_size=50, verbose=False) -> np.ndarray:
     """Calculates the activations of the pool_3 layer for all images.
     Params:
     -- images      : Numpy array of dimension (n_images, hi, wi, 3). The values
@@ -101,7 +102,7 @@ def get_activations(images, sess, batch_size=50, verbose=False):
 # -------------------------------------------------------------------------------
 
 
-def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
+def calculate_frechet_distance(mu1: np.ndarray, sigma1: np.ndarray, mu2: np.ndarray, sigma2: np.ndarray, eps=1e-6) -> float:
     """Numpy implementation of the Frechet Distance.
     The Frechet distance between two multivariate Gaussians X_1 ~ N(mu_1, C_1)
     and X_2 ~ N(mu_2, C_2) is
@@ -156,7 +157,7 @@ def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
 # -------------------------------------------------------------------------------
 
 
-def calculate_activation_statistics(images, sess, batch_size=50, verbose=False):
+def calculate_activation_statistics(images: np.ndarray, sess: tf.Session, batch_size=50, verbose=False) -> typing.Tuple[np.ndarray, np.ndarray]:
     """Calculation of the statistics used by the FID.
     Params:
     -- images      : Numpy array of dimension (n_images, hi, wi, 3). The values
@@ -186,7 +187,7 @@ def calculate_activation_statistics(images, sess, batch_size=50, verbose=False):
 # they're just here to make this module work as a stand-alone script
 # for calculating FID scores
 # -------------------------------------------------------------------------------
-def check_or_download_inception(inception_path):
+def check_or_download_inception(inception_path: typing.Optional[str]) -> str:
     ''' Checks if the path to the inception file is valid, or downloads
         the file if it is not present. '''
     INCEPTION_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
@@ -204,7 +205,7 @@ def check_or_download_inception(inception_path):
     return str(model_file)
 
 
-def _handle_path(path, sess):
+def _handle_path(path: str, sess: tf.Session) -> typing.Tuple[np.ndarray, np.ndarray]:
     if path.endswith('.npz'):
         f = np.load(path)
         m, s = f['m'][:], f['s'][:]
@@ -220,7 +221,7 @@ def _handle_path(path, sess):
     return m, s
 
 
-def calculate_fid_given_paths(paths, inception_path):
+def calculate_fid_given_paths(paths: typing.List[str], inception_path: str) -> float:
     ''' Calculates the FID of two paths. '''
     # inception_path = check_or_download_inception(inception_path)
 
@@ -237,7 +238,7 @@ def calculate_fid_given_paths(paths, inception_path):
         return fid_value
 
 
-def get_fid(dataset_name, dataset_dir, test_dir):
+def get_fid(dataset_name: str, dataset_dir: str, test_dir: str) -> float:
     inception_path = '/is/ps2/pghosh/datasets/inceptionv1_for_inception_score.pb'
     compare_dataset_name = os.path.join(dataset_dir, dataset_name.upper() + '_STATS.npz')
     if not os.path.exists(compare_dataset_name):

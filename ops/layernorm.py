@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 
-def Layernorm(opts, input, scope=None, reuse=None, scale=True, center=True):
+def Layernorm(opts: dict, input: tf.Tensor, scope=None, reuse=None, scale=True, center=True) -> tf.Tensor:
     """Layer normalization based on tf.contrib.layers.layer_norm.
 
     """

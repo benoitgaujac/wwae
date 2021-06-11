@@ -11,9 +11,10 @@ from wemd import wemd
 from wgan import wgan, wgan_v2
 
 import pdb
+import typing
 
 ######### latent losses #########
-def kl_penalty(pz_mean, pz_sigma, encoded_mean, encoded_sigma):
+def kl_penalty(pz_mean: tf.Tensor, pz_sigma: tf.Tensor, encoded_mean: tf.Tensor, encoded_sigma: tf.Tensor) -> tf.Tensor:
     """
     Compute KL divergence between prior and variational distribution
     """
@@ -23,7 +24,7 @@ def kl_penalty(pz_mean, pz_sigma, encoded_mean, encoded_sigma):
     kl = 0.5 * tf.reduce_sum(kl,axis=-1)
     return tf.reduce_mean(kl)
 
-def cross_entropy_loss(opts, inputs, dec_mean, dec_Sigma):
+def cross_entropy_loss(opts: dict, inputs: tf.Tensor, dec_mean: tf.Tensor, dec_Sigma: tf.Tensor) -> tf.Tensor:
     if opts['decoder']=='gaussian':
         cross_entropy = tf.log(2*pi) + tf.log(dec_Sigma) + tf.square(inputs-dec_mean) / dec_Sigma
         cross_entropy = -0.5 * tf.reduce_sum(cross_entropy,axis=-1)
@@ -32,7 +33,7 @@ def cross_entropy_loss(opts, inputs, dec_mean, dec_Sigma):
         cross_entropy = tf.reduce_sum(cross_entropy,axis=-1)
     return cross_entropy
 
-def mmd_penalty(opts, sample_qz, sample_pz):
+def mmd_penalty(opts: dict, sample_qz: tf.Tensor, sample_pz: tf.Tensor) -> tf.Tensor:
     """
     Comput MMD latent penalty
     """
@@ -88,7 +89,7 @@ def mmd_penalty(opts, sample_qz, sample_pz):
 
     return stat
 
-def square_dist(sample_x, sample_y):
+def square_dist(sample_x: tf.Tensor, sample_y: tf.Tensor) -> tf.Tensor:
     """
     Wrapper 2 to compute square distance
     """
@@ -99,7 +100,7 @@ def square_dist(sample_x, sample_y):
 
 
 ######### rec losses #########
-def wae_ground_cost(opts,  x1, x2, is_training=False, reuse=False):
+def wae_ground_cost(opts: dict,  x1: tf.Tensor, x2: tf.Tensor, is_training=False, reuse=False) -> typing.Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
     """
     Compute the WAE's ground cost
     x1: image data             [batch,h,w,c]
@@ -133,26 +134,26 @@ def wae_ground_cost(opts,  x1, x2, is_training=False, reuse=False):
         assert False, 'Unknown cost function %s' % opts['cost']
     return cost, intensities_reg, critic_reg
 
-def l2_cost(x1, x2):
+def l2_cost(x1: tf.Tensor, x2: tf.Tensor) -> tf.Tensor:
     # c(x,y) = ||x - y||_2
     cost = tf.reduce_sum(tf.square(x1 - x2), axis=[-3,-2,-1])
     cost = tf.sqrt(1e-10 + cost)
     # return tf.reduce_mean(cost)
     return cost
 
-def l2sq_cost(x1, x2):
+def l2sq_cost(x1: tf.Tensor, x2: tf.Tensor) -> tf.Tensor:
     # c(x,y) = sum_i(||x - y||_2^2[:,i])
     cost = tf.reduce_sum(tf.square(x1 - x2), axis=[-3,-2,-1])
     # return tf.reduce_mean(cost)
     return cost
 
-def l2sq_norm_cost(x1, x2):
+def l2sq_norm_cost(x1: tf.Tensor, x2: tf.Tensor) -> tf.Tensor:
     # c(x,y) = mean_i(||x - y||_2^2[:,i])
     cost = tf.reduce_mean(tf.square(x1 - x2), axis=[-3,-2,-1])
     # return tf.reduce_mean(cost)
     return cost
 
-def l1_cost(x1, x2):
+def l1_cost(x1: tf.Tensor, x2: tf.Tensor) -> tf.Tensor:
     # c(x,y) = ||x - y||_1
     cost = tf.reduce_sum(tf.abs(x1 - x2), axis=[-3,-2,-1])
     # return tf.reduce_mean(cost)

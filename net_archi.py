@@ -12,7 +12,7 @@ import ops._ops
 #################################### Encoder/Decoder ####################################
 
 ######### mlp #########
-def mlp_encoder(opts, input, output_dim, reuse=False, is_training=False):
+def mlp_encoder(opts: dict, input: tf.Tensor, output_dim: int, reuse=False, is_training=False) -> tf.Tensor:
     layer_x = input
     # hidden 0
     layer_x = Linear(opts, layer_x, np.prod(layer_x.get_shape().as_list()[1:]),
@@ -41,7 +41,7 @@ def mlp_encoder(opts, input, output_dim, reuse=False, is_training=False):
 
     return outputs
 
-def mlp_decoder(opts, input, output_dim, reuse=False, is_training=False):
+def mlp_decoder(opts: dict, input: tf.Tensor, output_dim: int, reuse=False, is_training=False) -> tf.Tensor:
     layer_x = input
     # hidden 0
     layer_x = Linear(opts, layer_x, np.prod(layer_x.get_shape().as_list()[1:]),
@@ -71,7 +71,7 @@ def mlp_decoder(opts, input, output_dim, reuse=False, is_training=False):
     return outputs
 
 ######### mnist/svhn #########
-def mnist_conv_encoder(opts, input, output_dim, reuse=False, is_training=False):
+def mnist_conv_encoder(opts: dict, input: tf.Tensor, output_dim: int, reuse=False, is_training=False) -> tf.Tensor:
     """
     Archi used by Ghosh & al.
     """
@@ -119,7 +119,7 @@ def mnist_conv_encoder(opts, input, output_dim, reuse=False, is_training=False):
 
     return outputs
 
-def mnist_conv_decoder(opts, input, output_dim, reuse, is_training):
+def mnist_conv_decoder(opts: dict, input: tf.Tensor, output_dim: int, reuse: bool, is_training: bool) -> tf.Tensor:
     """
     Archi used by Ghosh & al.
     """
@@ -167,7 +167,7 @@ def mnist_conv_decoder(opts, input, output_dim, reuse, is_training):
     return outputs
 
 ######### 64x64 transformed mnist #########
-def mnist_64_conv_encoder(opts, input, output_dim, reuse=False, is_training=False):
+def mnist_64_conv_encoder(opts: dict, input: tf.Tensor, output_dim: int, reuse=False, is_training=False) -> tf.Tensor:
     """
     Archi used by Ghosh & al.
     """
@@ -215,7 +215,7 @@ def mnist_64_conv_encoder(opts, input, output_dim, reuse=False, is_training=Fals
 
     return outputs
 
-def mnist_64_conv_decoder(opts, input, output_dim, reuse, is_training):
+def mnist_64_conv_decoder(opts: dict, input: tf.Tensor, output_dim: int, reuse: bool, is_training: bool) -> tf.Tensor:
     """
     Archi used by Ghosh & al.
     """
@@ -263,7 +263,7 @@ def mnist_64_conv_decoder(opts, input, output_dim, reuse, is_training):
     return outputs
 
 ######### cifar10 #########
-def cifar10_conv_encoder(opts, input, output_dim, reuse=False, is_training=False):
+def cifar10_conv_encoder(opts: dict, input: tf.Tensor, output_dim: int, reuse=False, is_training=False) -> tf.Tensor:
     """
     Archi used by Ghosh & al.
     """
@@ -302,7 +302,7 @@ def cifar10_conv_encoder(opts, input, output_dim, reuse=False, is_training=False
 
     return outputs
 
-def cifar10_conv_decoder(opts, input, output_dim, reuse, is_training):
+def cifar10_conv_decoder(opts: dict, input: tf.Tensor, output_dim: int, reuse: bool, is_training: bool) -> tf.Tensor:
     """
     Archi used by Ghosh & al.
     """
@@ -363,7 +363,7 @@ def cifar10_conv_decoder(opts, input, output_dim, reuse, is_training):
 
     return outputs
 
-def cifar10_resnet_encoder(opts, input, output_dim, reuse=False, is_training=False):
+def cifar10_resnet_encoder(opts: dict, input: tf.Tensor, output_dim: int, reuse=False, is_training=False) -> tf.Tensor:
 
     layer_x = input
     # optimized resblock
@@ -398,7 +398,7 @@ def cifar10_resnet_encoder(opts, input, output_dim, reuse=False, is_training=Fal
 
     return outputs
 
-def cifar10_resnet_decoder(opts, input, output_dim, reuse=False, is_training=False):
+def cifar10_resnet_decoder(opts: dict, input: tf.Tensor, output_dim: int, reuse=False, is_training=False) -> tf.Tensor:
 
     w,h = output_dim[0], output_dim[1]
     layer_x = input
@@ -439,7 +439,7 @@ def cifar10_resnet_decoder(opts, input, output_dim, reuse=False, is_training=Fal
     return output
 
 ######### celebA #########
-def celebA_conv_encoder(opts, input, output_dim, reuse=False, is_training=False):
+def celebA_conv_encoder(opts: dict, input: tf.Tensor, output_dim: int, reuse=False, is_training=False) -> tf.Tensor:
     """
     Archi used by Ghosh & al.
     """
@@ -487,7 +487,7 @@ def celebA_conv_encoder(opts, input, output_dim, reuse=False, is_training=False)
 
     return outputs
 
-def celebA_conv_decoder(opts, input, output_dim, reuse, is_training):
+def celebA_conv_decoder(opts: dict, input: tf.Tensor, output_dim: int, reuse: bool, is_training: bool) -> tf.Tensor:
     """
     Archi used by Ghosh & al.
     """
@@ -560,7 +560,7 @@ def celebA_conv_decoder(opts, input, output_dim, reuse, is_training):
 
     return outputs
 
-def celebA_resnet_encoder(opts, input, output_dim, reuse=False, is_training=False):
+def celebA_resnet_encoder(opts: dict, input: tf.Tensor, output_dim: int, reuse=False, is_training=False) -> tf.Tensor:
 
     layer_x = input
     # first conv layer
@@ -599,7 +599,7 @@ def celebA_resnet_encoder(opts, input, output_dim, reuse=False, is_training=Fals
 
     return outputs
 
-def celebA_resnet_decoder(opts, input, output_dim, reuse=False, is_training=False):
+def celebA_resnet_decoder(opts: dict, input: tf.Tensor, output_dim, reuse=False, is_training=False) -> tf.Tensor:
 
     w,h = output_dim[0], output_dim[1]
     layer_x = input
@@ -660,7 +660,7 @@ net_archi = {'mlp': {'encoder': mlp_encoder, 'decoder': mlp_decoder},
 #################################### Critic ####################################
 
 ######### mlp #########
-def mlp_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def mlp_critic(opts: dict, inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     layer_x = tf.keras.layers.Flatten(inputs)
     in_shape = inputs.get_shape().as_list()[1:]
     with tf.variable_scope(scope, reuse=reuse):
@@ -693,7 +693,7 @@ def mlp_critic(opts, inputs, scope=None, is_training=False, reuse=False):
     return outputs
 
 ######### conv #########
-def singleconv_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def singleconv_critic(opts: dict, inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     layer_x = inputs
     in_shape = inputs.get_shape().as_list()[1:]
     with tf.variable_scope(scope, reuse=reuse):
@@ -705,7 +705,7 @@ def singleconv_critic(opts, inputs, scope=None, is_training=False, reuse=False):
 
     return outputs
 
-def conv_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def conv_critic(opts: dict, inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     layer_x = inputs
     in_shape = inputs.get_shape().as_list()[1:]
     with tf.variable_scope(scope, reuse=reuse):
@@ -729,7 +729,7 @@ def conv_critic(opts, inputs, scope=None, is_training=False, reuse=False):
 
     return outputs
 
-def conv_v2_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def conv_v2_critic(opts: dict, inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     layer_x = inputs
     in_shape = inputs.get_shape().as_list()[1:]
     with tf.variable_scope(scope, reuse=reuse):
@@ -753,7 +753,7 @@ def conv_v2_critic(opts, inputs, scope=None, is_training=False, reuse=False):
 
     return outputs
 
-def conv_v3_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def conv_v3_critic(opts: dict, inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     layer_x = inputs
     in_shape = inputs.get_shape().as_list()[1:]
     with tf.variable_scope(scope, reuse=reuse):
@@ -777,7 +777,7 @@ def conv_v3_critic(opts, inputs, scope=None, is_training=False, reuse=False):
 
     return outputs
 
-def conv_v4_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def conv_v4_critic(opts: dict, inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     layer_x = inputs
     in_shape = inputs.get_shape().as_list()[1:]
     with tf.variable_scope(scope, reuse=reuse):
@@ -813,7 +813,7 @@ def conv_v4_critic(opts, inputs, scope=None, is_training=False, reuse=False):
 
     return outputs
 
-def conv_v5_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def conv_v5_critic(opts: dict, inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     layer_x = inputs
     in_shape = inputs.get_shape().as_list()[1:]
     with tf.variable_scope(scope, reuse=reuse):
@@ -844,7 +844,7 @@ def conv_v5_critic(opts, inputs, scope=None, is_training=False, reuse=False):
     return outputs
 
 ######### convdeconv #########
-def convdeconv_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def convdeconv_critic(opts: dict, inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     batch_size, in_shape =  tf.shape(inputs)[0], inputs.get_shape().as_list()[1:]
     layer_x = inputs
     with tf.variable_scope(scope, reuse=reuse):
@@ -869,7 +869,7 @@ def convdeconv_critic(opts, inputs, scope=None, is_training=False, reuse=False):
 
     return outputs
 
-def convdeconv_v2_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def convdeconv_v2_critic(opts, inputs, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     batch_size, in_shape =  tf.shape(inputs)[0], inputs.get_shape().as_list()[1:]
     layer_x = inputs
     with tf.variable_scope(scope, reuse=reuse):
@@ -894,7 +894,7 @@ def convdeconv_v2_critic(opts, inputs, scope=None, is_training=False, reuse=Fals
 
     return outputs
 
-def convdeconv_v3_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def convdeconv_v3_critic(opts: dict, inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     batch_size, in_shape =  tf.shape(inputs)[0], inputs.get_shape().as_list()[1:]
     layer_x = inputs
     with tf.variable_scope(scope, reuse=reuse):
@@ -919,7 +919,7 @@ def convdeconv_v3_critic(opts, inputs, scope=None, is_training=False, reuse=Fals
 
     return outputs
 
-def resnet_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def resnet_critic(opts: dict, inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     layer_x = inputs
     in_shape = inputs.get_shape().as_list()[1:]
     with tf.variable_scope(scope, reuse=reuse):
@@ -946,7 +946,7 @@ def resnet_critic(opts, inputs, scope=None, is_training=False, reuse=False):
 
     return outputs + inputs
 
-def resnet_v2_critic(opts, inputs, scope=None, is_training=False, reuse=False):
+def resnet_v2_critic(opts: dict, inputs: tf.Tensor, scope=None, is_training=False, reuse=False) -> tf.Tensor:
     layer_x = inputs
     in_shape = inputs.get_shape().as_list()[1:]
     with tf.variable_scope(scope, reuse=reuse):

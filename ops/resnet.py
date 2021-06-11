@@ -11,18 +11,18 @@ from ops.conv2d import Conv2d
 import ops._ops
 
 
-def ConvMeanPool(opts, input, input_dim, output_dim, filter_size, scope=None, init='he'):
+def ConvMeanPool(opts: dict, input: tf.Tensor, input_dim: int, output_dim: int, filter_size: int, scope=None, init='he') -> tf.Tensor:
     output = Conv2d(opts, input, input_dim, output_dim, filter_size, scope=scope, init=init)
     output = tf.nn.avg_pool2d(output, 2, 2, 'VALID')
     return output
 
-def MeanPoolConv(opts, input, input_dim, output_dim, filter_size, scope=None, init='he'):
+def MeanPoolConv(opts: dict, input: tf.Tensor, input_dim: int, output_dim: int, filter_size: int, scope=None, init='he') -> tf.Tensor:
     output = input
     output = tf.nn.avg_pool2d(output, 2, 2, 'VALID')
     output = Conv2d(opts, output, input_dim, output_dim, filter_size, scope=scope, init=init)
     return output
 
-def UpsampleConv(opts, input, input_dim, output_dim, filter_size, scope=None, init='he'):
+def UpsampleConv(opts: dict, input: tf.Tensor, input_dim: int, output_dim: int, filter_size: int, scope=None, init='he') -> tf.Tensor:
     output = input
     output = tf.keras.layers.UpSampling2D(size=(2,2))(output)
     # output = tf.concat([output, output, output, output], axis=-1) # concat along channel axis
@@ -31,7 +31,8 @@ def UpsampleConv(opts, input, input_dim, output_dim, filter_size, scope=None, in
     return output
 
 
-def ResidualBlock(opts, input, input_dim, output_dim, filter_size, scope=None, init='he', resample=None, is_training=False, reuse=None):
+def ResidualBlock(opts: dict, input: tf.Tensor, input_dim: int, output_dim: int, filter_size: int, scope=None, init='he',
+        resample=None, is_training=False, reuse=None) -> tf.Tensor:
     """
     resample: None, 'down', or 'up'
     """
@@ -90,7 +91,7 @@ def ResidualBlock(opts, input, input_dim, output_dim, filter_size, scope=None, i
 
     return shortcut + output
 
-def OptimizedResBlockEnc1(opts, input, input_dim, output_dim, filter_size, scope=None, init='he'):
+def OptimizedResBlockEnc1(opts: dict, input: tf.Tensor, input_dim: int, output_dim: int, filter_size: int, scope=None, init='he') -> tf.Tensor:
     conv_1  = functools.partial(Conv2d, input_dim=input_dim,
                                         output_dim=output_dim,
                                         filter_size=filter_size,

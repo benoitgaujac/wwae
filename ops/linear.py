@@ -5,15 +5,16 @@ import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 
 import pdb
+import typing
 
 
-def custom_uniform(stdev, size):
+def custom_uniform(stdev: float, size: typing.Iterable[int]) -> np.ndarray:
     return np.random.uniform(low=-stdev * np.sqrt(3),
                             high=stdev * np.sqrt(3),
                             size=size
                             ).astype('float32')
 
-def Linear(opts, input, input_dim, output_dim, scope=None, init=None, reuse=None):
+def Linear(opts: dict, input: tf.Tensor, input_dim: int, output_dim: int, scope=None, init=None, reuse=None) -> tf.Tensor:
     """Fully connected linear layer.
 
     Args:

@@ -3,6 +3,8 @@ import numpy as np
 import scipy.io as sio
 from kymatio.scattering2d.filter_bank import filter_bank
 
+import typing
+
 
 '''
 def wemd(x1,x2):
@@ -51,7 +53,7 @@ def wemd(x1,x2):
     return wemd #+ 1e-12*diff_m
 '''
 
-def wemd(opts, x1, x2):
+def wemd(opts: dict, x1: tf.Tensor, x2: tf.Tensor) -> typing.Tuple[tf.Tensor, tf.Tensor]:
 
     h, w, c = x1.get_shape().as_list()[1:]
     J = int(np.log2(h))  #number of scales
@@ -68,11 +70,11 @@ def wemd(opts, x1, x2):
     # Fourrier transform
     fftd = tf.signal.fft2d(d)
     # Get waves filters
-    dict = filter_bank(h, w, J, L)['psi']
+    dictt = filter_bank(h, w, J, L)['psi']
     waves = np.zeros([J, L, h, w])
     for j in range(J):
         for theta in range(L):
-            waves[j,theta,:,:] = dict[L*j+theta][0]
+            waves[j,theta,:,:] = dictt[L*j+theta][0]
     waves = tf.cast(waves, tf.complex64)
     # Conv in Fourrier domain
     hatprod = tf.reshape(waves, [1,1,J,L,h,w])*tf.reshape(fftd, [-1,c,1,1,h,w]) #(b,c,J,L,h,w)

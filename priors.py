@@ -6,8 +6,10 @@ import numpy as np
 import tensorflow as tf
 
 import pdb
+import typing
 
-def init_prior(opts):
+
+def init_prior(opts: dict) -> typing.Tuple[np.ndarray, np.ndarray]:
     Sigma = opts['pz_sigma']**2*np.ones(opts['zdim'], dtype='float32')
     if opts['prior']=='gaussian':
         means = np.zeros(opts['zdim'], dtype='float32')
@@ -18,7 +20,7 @@ def init_prior(opts):
 
     return means, Sigma
 
-def gmm(nmix, sigma):
+def gmm(nmix, sigma: np.ndarray) -> np.ndarray:
     """
     Initialize the means of the GMM on the diagonal
 
